@@ -1,0 +1,26 @@
+# Sensitive files
+.env
+.env.local
+*.env
+
+# API keys and secrets
+*api_key*
+*secret*
+firecrawl_config.sh
+
+# MCP config
+.mcp.json
+
+# Scripts with sensitive data
+scripts/*_local.sh
+
+# macOS files
+.DS_Store
+
+# Node modules
+node_modules/
+.node_modules/
+pnpm-lock.yaml
+
+# Never commit real API keys
+*_API_KEY

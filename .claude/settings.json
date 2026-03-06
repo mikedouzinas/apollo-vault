@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -f FIRST_RUN ] && echo '{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"\\n\\n# Welcome to Apollo Vault\\n\\nYour vault, but it thinks.\\n\\nRun the setup wizard to get started:\\n\\n/init-bootstrap\\n\\nThis will walk you through configuring your vault, importing existing notes, and setting up intelligence features.\\n\\n\"}}' || true"
+          }
+        ]
+      }
+    ]
+  }
+}

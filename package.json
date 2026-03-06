@@ -1,0 +1,36 @@
+{
+  "name": "apollo-vault",
+  "version": "0.1.0",
+  "description": "Apollo Vault - Your Obsidian vault, but it thinks. Built on Claude Code.",
+  "type": "module",
+  "scripts": {
+    "setup": "pnpm install && echo 'Setup complete! Run: claude' && echo 'Then: /init-bootstrap'",
+    "test-gemini": "GEMINI_API_KEY=${GEMINI_API_KEY} node .claude/mcp-servers/gemini-vision.mjs",
+    "attachments:list": "ls -1 '05_Attachments/' | grep -v Organized | head -20",
+    "attachments:count": "ls -1 '05_Attachments/' | grep -v Organized | wc -l",
+    "attachments:organized": "ls -1 '05_Attachments/Organized' 2>/dev/null | wc -l || echo '0'",
+    "attachments:unprocessed": "pnpm attachments:count",
+    "attachments:refs": "grep -r \"$1\" . --include=\"*.md\" 2>/dev/null | head -20",
+    "attachments:sizes": "find 05_Attachments -type f -exec du -h {} + | sort -rh | head -20",
+    "attachments:orphans": "for file in 05_Attachments/*; do basename \"$file\" | xargs -I {} sh -c 'grep -r \"{}\" . --include=\"*.md\" > /dev/null || echo \"{}\"'; done",
+    "attachments:recent": "find 05_Attachments -type f -mtime -7 -exec ls -la {} \\;",
+    "attachments:create-organized": "mkdir -p 05_Attachments/Organized",
+    "vault:stats": ".scripts/vault-stats.sh"
+  },
+  "keywords": [
+    "obsidian",
+    "claude",
+    "claude-code",
+    "ai",
+    "second-brain",
+    "knowledge-management",
+    "para-method",
+    "apollo"
+  ],
+  "author": "Mike Veson",
+  "license": "MIT",
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "name": "Apollo Vault",
+  "description": "Your Obsidian vault, but it thinks. Built on Claude Code.",
+  "version": "0.1.0",
+  "settings": {
+    "default_mode": "thinking",
+    "auto_save": true,
+    "context_awareness": true
+  },
+  "commands": {
+    "init-bootstrap": {
+      "description": "Setup wizard - configure your vault",
+      "file": "commands/init-bootstrap.md"
+    },
+    "council": {
+      "description": "Multi-perspective reasoning council",
+      "file": "commands/council.md"
+    },
+    "thinking-partner": {
+      "description": "Collaborative thinking and exploration",
+      "file": "commands/thinking-partner.md"
+    },
+    "daily-review": {
+      "description": "End-of-day reflection",
+      "file": "commands/daily-review.md"
+    },
+    "weekly-synthesis": {
+      "description": "Weekly pattern recognition and synthesis",
+      "file": "commands/weekly-synthesis.md"
+    },
+    "inbox-processor": {
+      "description": "Process and organize inbox files",
+      "file": "commands/inbox-processor.md"
+    },
+    "research-assistant": {
+      "description": "Deep research and synthesis",
+      "file": "commands/research-assistant.md"
+    },
+    "add-frontmatter": {
+      "description": "Add YAML frontmatter to notes",
+      "file": "commands/add-frontmatter.md"
+    },
+    "create-command": {
+      "description": "Build new custom commands",
+      "file": "commands/create-command.md"
+    },
+    "de-ai-ify": {
+      "description": "Remove AI writing patterns from text",
+      "file": "commands/de-ai-ify.md"
+    },
+    "release": {
+      "description": "Create a new release",
+      "file": "commands/release.md"
+    },
+    "upgrade": {
+      "description": "Upgrade Apollo Vault",
+      "file": "commands/upgrade.md"
+    }
+  },
+  "shortcuts": {
+    "tp": "thinking-partner",
+    "ip": "inbox-processor",
+    "ra": "research-assistant",
+    "dr": "daily-review",
+    "ws": "weekly-synthesis",
+    "c": "council"
+  },
+  "preferences": {
+    "primary_folders": ["00_Inbox", "01_Projects", "02_Areas", "03_Resources"],
+    "template_folder": "06_Metadata/Templates",
+    "archive_after_days": 30,
+    "default_note_location": "00_Inbox"
+  }
+}
