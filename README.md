@@ -1,82 +1,31 @@
 # Apollo Vault
 
-Your Obsidian vault, but it thinks.
-
-## What Is This?
-
-Apollo Vault is a Claude Code + Obsidian starter kit that makes your vault intelligent. It's not just a folder structure. Claude proactively loads context from your vault, maintains its own reference system, and grows smarter as you use it.
-
-Works in Claude Code terminal, Claude Code desktop app, or multiple instances simultaneously.
+Claude Code + Obsidian starter kit. Works in terminal, desktop app, or multiple instances at once.
 
 ## Quick Start
-
-### 1. Clone and Install
 
 ```bash
 git clone https://github.com/mikedouzinas/apollo-vault.git my-vault
 cd my-vault
-./install.sh
+./install.sh    # or: pnpm install
+claude          # start Claude Code
 ```
 
-Or manually:
+Then run `/init-bootstrap`. It walks you through setup in a conversation, learns about you, and generates a CLAUDE.md tailored to how you work.
 
-```bash
-pnpm install
-mkdir -p 05_Attachments/Organized
-```
+Optionally open the folder as a vault in [Obsidian](https://obsidian.md) for a visual interface alongside Claude Code.
 
-### 2. Open in Obsidian (Recommended)
+## Key Features
 
-Download [Obsidian](https://obsidian.md) and open this folder as a vault. This gives you a visual interface alongside Claude Code.
+**Self-maintaining CLAUDE.md** — Claude keeps its own reference tables updated. When it creates a file you'll need again, it adds the path. When you ask about something repeatedly, it suggests a shortcut. The config grows with your vault.
 
-### 3. Start Claude Code
+**Proactive context loading** — Claude checks recent vault changes at the start of every conversation. It loads relevant project files before you ask. You pick up where you left off.
 
-```bash
-claude
-```
+**Council** (`/council [topic]`) — Think through hard problems from multiple perspectives. Spawns 2-4 independent agents with different worldviews (Pragmatist, Contrarian, Humanist by default). No agent knows the others exist, so you get genuine reasoning instead of performative debate. A synthesis agent finds the real tensions and insights. Perspectives are configurable.
 
-### 4. Run Setup
+**Chat import** — Drop exported conversations from ChatGPT, Gemini, or any LLM into `00_Inbox/` and run `/inbox`. Apollo extracts insights and files them into your vault.
 
-```
-/init-bootstrap
-```
-
-This walks you through everything in a real conversation: who you are, how you work, what features you want. It generates a personalized CLAUDE.md that teaches Claude about your vault.
-
-## What Makes Apollo Different
-
-### Your CLAUDE.md Is Alive
-
-Most setups generate a static config file. Apollo's CLAUDE.md is a living document that Claude actively maintains. When Claude creates a new important file, it adds the path to the reference table. When you ask about something repeatedly, it suggests adding a quick-start trigger. The file grows with your vault.
-
-### Proactive Context Loading
-
-Claude doesn't wait for you to explain what you're working on. At the start of every conversation, it checks recent vault changes, loads relevant project context, and references what you were doing yesterday. You pick up where you left off.
-
-### The Council
-
-Think through hard problems from multiple genuine perspectives.
-
-```
-/council Should I take the job offer or stay at my current company?
-```
-
-Apollo spawns 2-4 independent agents, each with a different worldview (Pragmatist, Contrarian, Humanist by default). No agent knows about the others. This produces genuine reasoning, not performative debate. A synthesis agent then finds where they agree, where they genuinely disagree, and what insight emerges from the tension.
-
-Custom perspectives are configurable. A founder might want "Customer / Engineer / Investor." A writer might want "Editor / Reader / Subject Expert."
-
-### Bring Your History
-
-Drop exported conversations from ChatGPT, Gemini, or any other LLM into your inbox. Apollo processes them, extracts key insights, and files them into your vault. Months of thinking from other tools become searchable, connected knowledge.
-
-```
-# Drop chat exports into 00_Inbox/, then:
-/inbox
-```
-
-### Setup in One Conversation
-
-The setup wizard (`/init-bootstrap`) is a real dialogue. It researches your public profile, asks about your workflow, imports your existing notes, and configures everything based on the conversation. Not a form. Not a checklist.
+**Daily/weekly reviews** — Customizable reflection commands. Daily review is a 5-10 minute check-in. Weekly synthesis runs an autonomous retrospective then walks you through planning.
 
 ## Folder Structure
 
@@ -152,19 +101,9 @@ During setup, Apollo offers to configure your vault in iCloud so you can access 
 
 An always-on background agent accessible via Telegram. Requires Docker and technical setup. Currently unstable. Mentioned during setup for those interested.
 
-## Philosophy
+## Credits
 
-AI amplifies thinking, not just writing. Your vault is your second brain. Apollo makes it intelligent.
-
-The key principles:
-- **Proactive, not reactive** - Claude loads context before you ask
-- **Living, not static** - CLAUDE.md grows with your vault
-- **Genuine, not performative** - The council produces real reasoning
-- **Yours, not generic** - Everything is configured to how you actually work
-
-## Built On
-
-Built on ideas from [Claudesidian](https://github.com/heyitsnoah/claudesidian) by Noah Brier and the team at [Alephic](https://alephic.com). Apollo adds vault intelligence, the council command, chat import, and a self-maintaining CLAUDE.md system.
+Built on ideas from [Claudesidian](https://github.com/heyitsnoah/claudesidian) by Noah Brier and the team at [Alephic](https://alephic.com).
 
 ## Contributing
 
