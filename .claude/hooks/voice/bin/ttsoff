@@ -1,0 +1,3 @@
+#!/bin/zsh
+# Mute Claude Code spoken responses (for sensitive sessions)
+touch ~/.claude/hooks/voice/tts-off && echo "🔇 TTS muted"

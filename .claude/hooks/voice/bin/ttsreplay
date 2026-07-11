@@ -1,0 +1,5 @@
+#!/bin/zsh
+# Stop whatever's playing and re-speak the current (or most-recently-active) session's
+# last reply. Run via `!ttsreplay` inside the session you want, or the ⌥⇧R hotkey.
+T="${CLAUDE_TRANSCRIPT_PATH:-$(ls -t ~/.claude/projects/*/*.jsonl 2>/dev/null | head -1)}"
+[ -n "$T" ] && /opt/homebrew/bin/python3 ~/.claude/hooks/voice/replay.py "$T" && echo "🔁 replaying"
