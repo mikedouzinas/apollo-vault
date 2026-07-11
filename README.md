@@ -25,6 +25,8 @@ Optionally open the folder as a vault in [Obsidian](https://obsidian.md) for a v
 
 **Chat import** — Drop exported conversations from ChatGPT, Gemini, or any LLM into `00_Inbox/` and run `/inbox`. Apollo extracts insights and files them into your vault.
 
+**Voice** (`./.claude/hooks/voice/install.sh`) — Your vault reads itself to you. Claude speaks its replies aloud in a local neural voice: no API key, no cloud, no per-word billing, works on a subscription. It reads the *whole* reply (including prose written around tool calls, which the naive version silently truncates), synthesizes ahead so there's no gap between sentences, ducks your music while it talks, and stops on command. Built during a concussion, when I had to minimize screen time and listening cost me no recovery. Take a walk and keep working. See [`.claude/hooks/voice/`](.claude/hooks/voice/).
+
 **Daily/weekly reviews** — Customizable reflection commands. Daily review is a 5-10 minute check-in. Weekly synthesis runs an autonomous retrospective then walks you through planning.
 
 ## Folder Structure

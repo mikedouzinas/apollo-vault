@@ -1,0 +1,4 @@
+#!/bin/zsh
+# Stop whatever is being spoken right now
+curl -s -X POST http://127.0.0.1:8765/stop >/dev/null 2>&1
+pkill -x afplay; pkill -x say; pkill -x saymike; echo "⏹  stopped"

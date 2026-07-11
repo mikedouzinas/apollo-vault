@@ -1,0 +1,3 @@
+#!/bin/zsh
+# Enable Claude Code spoken responses
+rm -f ~/.claude/hooks/voice/tts-off && echo "🔊 TTS on"
