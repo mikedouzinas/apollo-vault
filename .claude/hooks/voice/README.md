@@ -10,9 +10,9 @@ Claude Code speaks its replies aloud in a local neural voice. No API key, no clo
 
 ## Why
 
-A vault is for thinking, and thinking doesn't only happen at a desk. This was built during a concussion, when reading a screen was the single most expensive thing its author could do — but *listening* cost nothing. It turns out that's not a niche case. You can take a walk and keep working. You can wash dishes and keep working. You can close your eyes.
+Built during a concussion, when I had to minimize screen time and listening cost me no recovery.
 
-Screens have been the only channel into these tools for a long time. They don't have to be.
+That turns out not to be a niche case. You can take a walk and keep working. You can close your eyes and keep working. Screens have been the only channel into these tools for a long time, and they don't have to be.
 
 ## What you get
 
