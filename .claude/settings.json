@@ -1,12 +1,11 @@
 {
   "hooks": {
-    "PostToolUse": [
+    "SessionStart": [
       {
-        "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
-            "command": "[ -f FIRST_RUN ] && echo '{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"\\n\\n# Welcome to Apollo Vault\\n\\nYour vault, but it thinks.\\n\\nRun the setup wizard to get started:\\n\\n/init-bootstrap\\n\\nThis will walk you through configuring your vault, importing existing notes, and setting up intelligence features.\\n\\n\"}}' || true"
+            "command": "[ -f FIRST_RUN ] && echo '{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"\\n\\nThis vault has not been set up yet (FIRST_RUN exists). Follow the FIRST RUN section of CLAUDE.md now: greet them, explain in plain words what this folder is, ask the four questions one at a time, write their answers into CLAUDE.md, delete FIRST_RUN, and then invite them to give you something to read. Do not tell them to run a slash command.\"}}' || true"
           }
         ]
       }
