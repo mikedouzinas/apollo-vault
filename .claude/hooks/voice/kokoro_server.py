@@ -46,38 +46,104 @@ DEBOUNCE = 0.35   # coalesce hook double-fires within this window; play only the
 GREEK_RE = re.compile(r"[\u0370-\u03ff\u1f00-\u1fff]")
 GREEK_VOICE = "Melina"      # macOS `say`, el_GR. Kokoro has no Greek at all.
 
+# Kokoro voice + phonemizer language, per detected language.
+KOKORO_VOICES = {
+    "en": ("af_heart", "en-us"),
+    "es": ("ef_dora",  "es"),
+}
+
+# Spanish is the hard case: same alphabet as English, so script detection (which
+# is all Greek needs) tells us nothing. Detect by function words instead, since
+# they're the highest-frequency and most language-specific tokens in any sentence.
+# Deliberately EXCLUDES words that collide with English: no, si, a, me, son, van,
+# ten, la (as a note), sea, come, dice...
+SPANISH_WORDS = frozenset("""
+el los las un una unos unas del que qu\u00e9 y en es est\u00e1 est\u00e1n soy eres somos ser estar
+por para con sin pero como c\u00f3mo m\u00e1s muy tambi\u00e9n cuando cu\u00e1ndo d\u00f3nde donde porque
+esto esta este eso esa ese todo toda todos todas hacer tiene tengo puedo puede
+quiero quiere vamos voy bien ahora hoy ma\u00f1ana gracias hola s\u00ed yo t\u00fa \u00e9l ella
+nosotros ellos se le lo su mi tus mis al ya nada algo hay mucho mucha poco
+entonces aunque hasta desde sobre entre cada otro otra as\u00ed aqu\u00ed all\u00ed buenos
+buenas noches d\u00edas tarde cabeza hablar quiero c\u00f3mo est\u00e1s estoy
+""".split())
+SPANISH_STRONG = re.compile(r"[\u00f1\u00bf\u00a1]|[\u00e1\u00e9\u00ed\u00f3\u00fa]\w")   # \u00f1 and inverted marks are Spanish-only
+
+def _is_spanish(text):
+    toks = re.findall(r"[a-z\u00e1\u00e9\u00ed\u00f3\u00fa\u00f1\u00fc]+", text.lower())
+    if not toks:
+        return False
+    if SPANISH_STRONG.search(text.lower()):
+        return True
+    hits = sum(1 for t in toks if t in SPANISH_WORDS)
+    if len(toks) <= 3:
+        return hits >= 1        # "Hola." / "Gracias." can't clear a 2-hit bar
+    # Otherwise two independent signals: enough hits AND enough density. A lone
+    # "con" or "hay" inside an English sentence must never flip the voice.
+    return hits >= 2 and hits / len(toks) >= 0.20
+
+def _raw_sentences(text):
+    """Split, and do NOT merge. Language detection needs true sentence boundaries."""
+    return [p.strip() for p in re.split(r'(?<=[.!?])\s+', text) if p.strip()] or [text]
+
 def _sentences(text):
-    parts = re.split(r'(?<=[.!?])\s+', text)
+    """Split, merging short fragments -> fewer synthesis boundaries.
+
+    Only ever called WITHIN one language (from the producer). Merging before the
+    language split would glue a short foreign sentence onto its neighbour and the
+    whole blob would get classified as one language: 'Buenos días.' is 12 chars,
+    so it used to swallow the English sentence after it.
+    """
     out = []
-    for p in parts:
-        p = p.strip()
-        if not p:
-            continue
-        if out and len(out[-1]) < 60:          # merge short fragments -> fewer boundaries
+    for p in _raw_sentences(text):
+        if out and len(out[-1]) < 60:
             out[-1] += " " + p
         else:
             out.append(p)
     return out or [text]
 
 def _runs(text):
-    """Split into ('el'|'en', chunk) runs, in order.
+    """Split into ('el'|'es'|'en', chunk) runs, in order.
 
-    Greek and English can alternate inside one reply. Each run is routed to the
-    engine that can actually pronounce it, and both engines write FILES into the
-    same playback queue -- so ordering, interruption and ducking keep working
-    unchanged. Punctuation attaches to the run it follows.
+    Two passes, because the two problems are genuinely different:
+
+      1. GREEK is detected per TOKEN, by script. Unambiguous, so it can switch
+         mid-sentence -- which is how Mike actually writes.
+      2. SPANISH is detected per SENTENCE, by function words. It shares the Latin
+         alphabet with English, so there is no per-token signal; a sentence is the
+         smallest unit that carries enough evidence to call it.
+
+    Every run routes to the engine that can pronounce it, and all engines write
+    FILES into the same playback queue -- so ordering, interruption and ducking
+    keep working untouched.
     """
     toks = re.findall(r"\S+\s*", text)
-    runs, cur, lang = [], [], None
+    script_runs, cur, lang = [], [], None
     for t in toks:
-        l = "el" if GREEK_RE.search(t) else ("en" if re.search(r"[A-Za-z]", t) else lang or "en")
+        l = "el" if GREEK_RE.search(t) else ("lat" if re.search(r"[A-Za-z]", t) else lang or "lat")
         if l != lang and cur:
-            runs.append((lang, "".join(cur).strip())); cur = []
+            script_runs.append((lang, "".join(cur).strip())); cur = []
         lang = l
         cur.append(t)
     if cur:
-        runs.append((lang, "".join(cur).strip()))
-    return [(l, c) for l, c in runs if c]
+        script_runs.append((lang, "".join(cur).strip()))
+
+    out = []
+    for l, chunk in script_runs:
+        if not chunk:
+            continue
+        if l == "el":
+            out.append(("el", chunk))
+            continue
+        for s in _raw_sentences(chunk):      # Latin: decide es-vs-en per sentence
+            out.append(("es" if _is_spanish(s) else "en", s))
+    # merge neighbours that ended up in the same language
+    merged = []
+    for l, c in out:
+        if merged and merged[-1][0] == l:
+            merged[-1] = (l, merged[-1][1] + " " + c)
+        else:
+            merged.append((l, c))
+    return merged
 
 def _synth(lang, chunk):
     """Render one chunk to a file. Returns a path, or None."""
@@ -90,7 +156,8 @@ def _synth(lang, chunk):
             subprocess.run(["say", "-v", GREEK_VOICE, "-o", path, chunk],
                            check=True, stderr=subprocess.DEVNULL, timeout=30)
         else:
-            samples, sr = kokoro.create(chunk, voice=VOICE, speed=SPEED, lang=LANG)
+            voice, code = KOKORO_VOICES.get(lang, KOKORO_VOICES["en"])
+            samples, sr = kokoro.create(chunk, voice=voice, speed=SPEED, lang=code)
             sf.write(path, _trim(samples, sr), sr)
         return path
     except Exception as e:
@@ -252,6 +319,7 @@ class H(http.server.BaseHTTPRequestHandler):
             stop()
         elif self.path == "/voice" and body.strip():
             VOICE = body.strip()
+            KOKORO_VOICES["en"] = (VOICE, "en-us")   # /voice retunes English only
         self.send_response(204)
         self.end_headers()
 
