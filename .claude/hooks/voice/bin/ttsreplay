@@ -1,5 +1,18 @@
 #!/bin/zsh
-# Stop whatever's playing and re-speak the current (or most-recently-active) session's
-# last reply. Run via `!ttsreplay` inside the session you want, or the ⌥⇧R hotkey.
-T="${CLAUDE_TRANSCRIPT_PATH:-$(ls -t ~/.claude/projects/*/*.jsonl 2>/dev/null | head -1)}"
-[ -n "$T" ] && /opt/homebrew/bin/python3 ~/.claude/hooks/voice/replay.py "$T" && echo "🔁 replaying"
+# Re-speak THIS session's last reply, interrupting whatever is playing.
+# Uses CLAUDE_CODE_SESSION_ID so it can never grab another terminal's transcript.
+V="$HOME/.claude/hooks/voice"
+[ -d "$V" ] || V="$HOME/.claude/hooks"
+
+if [ -n "$CLAUDE_CODE_SESSION_ID" ]; then
+  T=$(ls ~/.claude/projects/*/"$CLAUDE_CODE_SESSION_ID".jsonl 2>/dev/null | head -1)
+fi
+# Fallback only when the env var is absent (e.g. the ⌥⇧R global hotkey).
+[ -z "$T" ] && T=$(ls -t ~/.claude/projects/*/*.jsonl 2>/dev/null | head -1)
+[ -z "$T" ] && { echo "no transcript found"; exit 1 }
+
+# Consume the ONE Stop-hook speech this !command is about to trigger,
+# so my own reply doesn't stomp the replay you just asked for.
+date +%s > "$HOME/.claude/hooks/voice/suppress-next"
+
+/opt/homebrew/bin/python3 "$HOME/.claude/hooks/voice/replay.py" "$T" && echo "🔁 replaying $(basename $T .jsonl | cut -c1-8)"

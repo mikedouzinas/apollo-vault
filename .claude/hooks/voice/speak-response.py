@@ -22,6 +22,8 @@ import sys, json, re, subprocess, os, time
 USE_KOKORO = True  # local neural voice via the Kokoro server (best quality). False -> say/personal
 KOKORO_URL = "http://127.0.0.1:8765/speak"
 VOICE = "Moira"    # fallback `say` voice (Irish) if Kokoro is off/down
+USE_PERSONAL = False # use Mike's Voice (saymike helper) as the fallback instead of `say`
+PERSONAL_BIN = os.path.expanduser("~/.claude/hooks/saymike")
 MAX_CHARS = 9000
 
 def log(msg):
@@ -33,6 +35,27 @@ def log(msg):
 
 def muted():
     return os.path.exists(os.path.expanduser("~/.claude/hooks/voice/tts-off"))
+
+def suppressed():
+    """One-shot mute, set by ttsreplay/ttsstop.
+
+    Running `!ttsreplay` inside a session is itself a user turn, so Claude answers
+    it and THIS hook fires and speaks that answer, cutting off the replay that was
+    just asked for. The flag consumes exactly that one Stop event. Time-limited so a
+    stale flag can never silently mute a later reply.
+    """
+    f = os.path.expanduser("~/.claude/hooks/voice/suppress-next")
+    if not os.path.exists(f):
+        return False
+    try:
+        fresh = (time.time() - os.path.getmtime(f)) < 120
+    except Exception:
+        fresh = False
+    try:
+        os.remove(f)          # consume it either way
+    except Exception:
+        pass
+    return fresh
 
 def current_turn_text(tpath):
     """All assistant text since the last genuine human message (reads around tool calls)."""
@@ -129,9 +152,14 @@ def worker(tpath):
         except Exception as e:
             log("kokoro unreachable (%r) -> fallback" % e)
     subprocess.run(["pkill", "-x", "say"], stderr=subprocess.DEVNULL)
-    cmd = ["say"] + (["-v", VOICE] if VOICE else []) + [spoken]
-    subprocess.Popen(cmd)
-    log("worker: spoke %d chars (say/%s)" % (len(spoken), VOICE))
+    subprocess.run(["pkill", "-x", "saymike"], stderr=subprocess.DEVNULL)
+    if USE_PERSONAL and os.path.exists(PERSONAL_BIN):
+        subprocess.Popen([PERSONAL_BIN, spoken])
+        log("worker: spoke %d chars (Mike's Voice)" % len(spoken))
+    else:
+        cmd = ["say"] + (["-v", VOICE] if VOICE else []) + [spoken]
+        subprocess.Popen(cmd)
+        log("worker: spoke %d chars (say/%s)" % (len(spoken), VOICE))
 
 def main():
     # Worker mode (spawned detached): do the wait-and-speak.
@@ -143,6 +171,8 @@ def main():
     log("--- hook fired ---")
     if muted():
         log("muted (tts-off present)"); return
+    if suppressed():
+        log("suppressed (this turn was triggered by ttsreplay/ttsstop)"); return
     try:
         data = json.load(sys.stdin)
     except Exception as e:

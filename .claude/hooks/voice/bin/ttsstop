@@ -1,4 +1,9 @@
 #!/bin/zsh
-# Stop whatever is being spoken right now
+# Shut up right now. Also consumes the one Stop-hook speech that this
+# !command's own reply would otherwise trigger.
+date +%s > "$HOME/.claude/hooks/voice/suppress-next"
 curl -s -X POST http://127.0.0.1:8765/stop >/dev/null 2>&1
-pkill -x afplay; pkill -x say; pkill -x saymike; echo "⏹  stopped"
+pkill -x afplay 2>/dev/null
+pkill -x say 2>/dev/null
+pkill -x saymike 2>/dev/null
+echo "🔇 stopped"
