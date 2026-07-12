@@ -22,6 +22,17 @@ VOICE = "af_heart"     # natural default. Others: af_bella, af_nicole, bf_emma (
 SPEED = 1.0
 LANG = "en-us"
 PORT = 8765
+LOG = os.path.expanduser("~/.claude/hooks/voice/tts.log")
+
+def log(msg):
+    """The server used to fail SILENTLY: /speak returned 204, the playback thread
+    died, and the hook logged a cheerful 'sent N chars to kokoro'. Every failure
+    looked exactly like success. Nothing below is allowed to be quiet again."""
+    try:
+        with open(LOG, "a") as f:
+            f.write("[kokoro] " + msg + "\n")
+    except Exception:
+        pass
 
 kokoro = Kokoro(os.path.join(HERE, "kokoro-v1.0.onnx"), os.path.join(HERE, "voices-v1.0.bin"))
 
@@ -82,7 +93,8 @@ def _synth(lang, chunk):
             samples, sr = kokoro.create(chunk, voice=VOICE, speed=SPEED, lang=LANG)
             sf.write(path, _trim(samples, sr), sr)
         return path
-    except Exception:
+    except Exception as e:
+        log("SYNTH FAILED (%s, %d chars): %r" % (lang, len(chunk), e))
         try: os.remove(path)
         except Exception: pass
         return None
@@ -96,13 +108,62 @@ def _trim(samples, sr, thresh=0.006):
     end = min(len(samples), idx[-1] + int(0.03 * sr))
     return samples[start:end]
 
+DUCK_TO = 30                       # percent, while speaking
+DUCK_APPS = ("Spotify", "Music")
+_ducked = {}
+
+def _osa(script, timeout=5):
+    """Run AppleScript, never raise, never block forever."""
+    try:
+        r = subprocess.run(["osascript", "-e", script], capture_output=True,
+                           text=True, timeout=timeout)
+        return r.stdout.strip() if r.returncode == 0 else None
+    except Exception as e:
+        log("osascript failed: %r" % e)
+        return None
+
+def duck():
+    """Lower music volume while speaking. Volume only — never play/pause state.
+
+    `tell application "X" to ...` LAUNCHES X if it isn't running (a bare volume
+    read on a closed Spotify took 3.8s and opened the app). The `is running`
+    guard is what keeps this from launching apps and stalling playback.
+    """
+    _ducked.clear()
+    for app in DUCK_APPS:
+        v = _osa('if application "%s" is running then '
+                 'tell application "%s" to get sound volume' % (app, app))
+        if not v or not v.isdigit():
+            continue                      # not running -> nothing to duck
+        v = int(v)
+        if v > DUCK_TO:
+            _ducked[app] = v
+            _osa('if application "%s" is running then '
+                 'tell application "%s" to set sound volume to %d' % (app, app, DUCK_TO))
+
+def unduck():
+    for app, v in list(_ducked.items()):
+        _osa('if application "%s" is running then '
+             'tell application "%s" to set sound volume to %d' % (app, app, v))
+    _ducked.clear()
+
 def _run(text, my_gen):
-    duck()
+    # Ducking must NEVER be able to prevent speech. It is a nicety; the voice is
+    # the product. Any failure here gets logged and stepped over.
+    try:
+        duck()
+    except Exception as e:
+        log("duck failed (continuing): %r" % e)
     try:
         _play(text, my_gen)
+    except Exception as e:
+        log("PLAYBACK FAILED: %r" % e)
     finally:
         if my_gen == _gen:      # only restore if we weren't superseded mid-speech
-            unduck()
+            try:
+                unduck()
+            except Exception as e:
+                log("unduck failed: %r" % e)
 
 def _play(text, my_gen):
     q = queue.Queue(maxsize=4)
@@ -195,4 +256,14 @@ class H(http.server.BaseHTTPRequestHandler):
         self.end_headers()
 
 if __name__ == "__main__":
+    # Fail LOUD on start. The duck()/unduck() NameError that broke this server
+    # for a full morning was invisible because nothing ever checked and nothing
+    # ever logged. Synthesize one throwaway word: if the pipeline is broken, the
+    # log says so at startup instead of after a day of silence.
+    p = _synth("en", "ready")
+    if p:
+        os.remove(p)
+        log("startup OK — voice=%s, port=%d" % (VOICE, PORT))
+    else:
+        log("STARTUP FAILED — synthesis is broken, speech will not work")
     http.server.HTTPServer(("127.0.0.1", PORT), H).serve_forever()
