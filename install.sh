@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Apollo Vault Setup"
+echo "Iris Vault Setup"
 echo "=================="
 echo ""
 

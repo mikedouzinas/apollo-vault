@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to Apollo Vault will be documented in this file.
+All notable changes to Iris Vault will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - 2026-03-05
 
 ### Added
-- Initial release of Apollo Vault
+- Initial release of Iris Vault
 - Interactive setup wizard via `/init-bootstrap`
   - Public profile research during setup
   - Existing vault import with OLD_VAULT preservation
@@ -30,7 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Customizable daily review command
 - Two-phase weekly synthesis (autonomous retrospective + interactive prospective)
 - Inbox processor with LLM chat export support
-- PARA method folder structure with Apollo additions (Council/, Daily Journal/, Weekly Reviews/)
+- PARA method folder structure with Iris additions (Council/, Daily Journal/, Weekly Reviews/)
 - Auto-sync hooks (opt-in, local commits only)
 - Gemini Vision MCP server for image/PDF/video analysis (optional)
 - Firecrawl web scraping integration (optional)
@@ -40,5 +40,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Credits
 - Built on ideas from [Claudesidian](https://github.com/heyitsnoah/claudesidian) by Noah Brier and [Alephic](https://alephic.com)
 
-[Unreleased]: https://github.com/mikedouzinas/apollo-vault/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/mikedouzinas/apollo-vault/releases/tag/v0.1.0
+[Unreleased]: https://github.com/mikedouzinas/iris-vault/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/mikedouzinas/iris-vault/releases/tag/v0.1.0

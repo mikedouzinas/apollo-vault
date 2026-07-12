@@ -5,7 +5,7 @@ allowed-tools: [Read, Write, Edit, Bash, Glob, Grep, Agent, WebSearch, WebFetch]
 argument-hint: "(optional) path to existing vault or 'new' for fresh setup"
 ---
 
-# Initialize Apollo Vault
+# Initialize Iris Vault
 
 This command walks you through configuring your vault in a real conversation, not a form. It learns about you, imports your existing knowledge, and generates a personalized CLAUDE.md that makes Claude intelligent about your vault.
 
@@ -27,7 +27,7 @@ This command walks you through configuring your vault in a real conversation, no
 
 4. **Check git status:**
    - If no .git folder: Initialize git repository
-   - If has remote origin pointing to apollo-vault repo: Ask about development work
+   - If has remote origin pointing to iris-vault repo: Ask about development work
      - Personal vault: Remove origin and .github folder
      - Contributing: Keep origin and workflows intact
    - If clean local repo: Ready to go
@@ -106,7 +106,7 @@ This command walks you through configuring your vault in a real conversation, no
 
 ### Phase 3.5: Knowledge Import
 
-17. **"Do you have files you'd like Apollo to learn from?"**
+17. **"Do you have files you'd like Iris to learn from?"**
     - "This could be exported chats from ChatGPT or Gemini, existing notes, project docs, anything about you or your work."
     - "Drop them into 00_Inbox/ and tell me when you're ready."
     - "Or type 'skip' to continue without importing."
@@ -281,7 +281,7 @@ This command walks you through configuring your vault in a real conversation, no
 ```
 
 29. **Generate personalized CLAUDE.md:**
-    - Read APOLLO-BOOTSTRAP.md as template
+    - Read IRIS-BOOTSTRAP.md as template
     - Replace all `{{PLACEHOLDER}}` blocks with user's answers:
       - `{{DATE}}`: current date
       - `{{USER_NAME}}`: their name

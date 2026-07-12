@@ -1,17 +1,17 @@
-# Apollo Vault Repository Management
+# Iris Vault Repository Management
 
-**This CLAUDE.md is for maintaining the apollo-vault repository itself.**
+**This CLAUDE.md is for maintaining the iris-vault repository itself.**
 
 **If you're a user setting up your own vault:**
 - Run `/init-bootstrap` to create your personalized CLAUDE.md
 - That command will overwrite this file with your custom configuration
-- This file is only for contributors working on the apollo-vault project
+- This file is only for contributors working on the iris-vault project
 
 ---
 
 ## Repository Overview
 
-Apollo Vault is a Claude Code + Obsidian starter kit that makes your vault intelligent. Built on ideas from [Claudesidian](https://github.com/heyitsnoah/claudesidian) by Noah Brier.
+Iris Vault is a Claude Code + Obsidian starter kit that makes your vault intelligent. Built on ideas from [Claudesidian](https://github.com/heyitsnoah/claudesidian) by Noah Brier.
 
 ## Version Management
 
@@ -40,7 +40,7 @@ chore: maintenance tasks
 ## Project Structure
 
 ```
-apollo-vault/
+iris-vault/
 ├── .claude/
 │   ├── commands/         # Slash commands
 │   ├── mcp-servers/      # MCP server implementations
@@ -49,7 +49,7 @@ apollo-vault/
 │   └── settings.local.json
 ├── .scripts/             # Helper bash/js scripts
 ├── 00_Inbox/ through 06_Metadata/  # Template PARA folders
-├── APOLLO-BOOTSTRAP.md   # Template for user CLAUDE.md
+├── IRIS-BOOTSTRAP.md   # Template for user CLAUDE.md
 ├── CHANGELOG.md
 ├── CONTRIBUTING.md
 ├── README.md
@@ -88,7 +88,7 @@ apollo-vault/
 ### Testing Changes
 
 ```bash
-git clone https://github.com/mikedouzinas/apollo-vault.git test-vault
+git clone https://github.com/mikedouzinas/iris-vault.git test-vault
 cd test-vault
 pnpm install
 claude  # Then run /init-bootstrap
@@ -96,14 +96,14 @@ claude  # Then run /init-bootstrap
 
 ### Important Files
 
-- **APOLLO-BOOTSTRAP.md** - Template that init-bootstrap uses to generate user CLAUDE.md
+- **IRIS-BOOTSTRAP.md** - Template that init-bootstrap uses to generate user CLAUDE.md
 - **package.json** - Version and dependencies
 - **.claude/commands/init-bootstrap.md** - The setup wizard (most important command)
 
 ## Note for Contributors
 
 Users run `/init-bootstrap` which:
-1. Reads APOLLO-BOOTSTRAP.md as template
+1. Reads IRIS-BOOTSTRAP.md as template
 2. Asks personalization questions in conversation
 3. Overwrites this CLAUDE.md with user's configuration
 4. Sets up their personal vault

@@ -1,11 +1,11 @@
 ---
-description: Intelligently upgrade Apollo Vault with new features while preserving your customizations
+description: Intelligently upgrade Iris Vault with new features while preserving your customizations
 allowed-tools: [Read, Write, Edit, Bash, Glob, Grep]
 ---
 
-# Upgrade Apollo Vault
+# Upgrade Iris Vault
 
-Upgrade your Apollo Vault installation with the latest features while preserving your customizations.
+Upgrade your Iris Vault installation with the latest features while preserving your customizations.
 
 ## Process
 

@@ -1,7 +1,7 @@
 {
-  "name": "apollo-vault",
+  "name": "iris-vault",
   "version": "0.1.0",
-  "description": "Apollo Vault - Your Obsidian vault, but it thinks. Built on Claude Code.",
+  "description": "Iris Vault - Your Obsidian vault, but it thinks. Built on Claude Code.",
   "type": "module",
   "scripts": {
     "setup": "pnpm install && echo 'Setup complete! Run: claude' && echo 'Then: /init-bootstrap'",
@@ -25,7 +25,7 @@
     "second-brain",
     "knowledge-management",
     "para-method",
-    "apollo"
+    "iris"
   ],
   "author": "Mike Veson",
   "license": "MIT",

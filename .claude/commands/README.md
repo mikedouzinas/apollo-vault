@@ -1,4 +1,4 @@
-# Apollo Vault Commands
+# Iris Vault Commands
 
 Pre-configured commands for your Claude Code + Obsidian workflow.
 
@@ -38,7 +38,7 @@ Remove AI-generated jargon and restore human voice to text.
 Create a new release with version bump, changelog, and git tag.
 
 ### /upgrade
-Upgrade Apollo Vault with latest features.
+Upgrade Iris Vault with latest features.
 
 ## Creating Custom Commands
 

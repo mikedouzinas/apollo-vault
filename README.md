@@ -1,11 +1,11 @@
-# Apollo Vault
+# Iris Vault
 
 Claude Code + Obsidian starter kit. Works in terminal, desktop app, or multiple instances at once.
 
 ## Quick Start
 
 ```bash
-git clone https://github.com/mikedouzinas/apollo-vault.git my-vault
+git clone https://github.com/mikedouzinas/iris-vault.git my-vault
 cd my-vault
 ./install.sh    # or: pnpm install
 claude          # start Claude Code
@@ -23,7 +23,7 @@ Optionally open the folder as a vault in [Obsidian](https://obsidian.md) for a v
 
 **Council** (`/council [topic]`) — Think through hard problems from multiple perspectives. Spawns 2-4 independent agents with different worldviews (Pragmatist, Contrarian, Humanist by default). No agent knows the others exist, so you get genuine reasoning instead of performative debate. A synthesis agent finds the real tensions and insights. Perspectives are configurable.
 
-**Chat import** — Drop exported conversations from ChatGPT, Gemini, or any LLM into `00_Inbox/` and run `/inbox`. Apollo extracts insights and files them into your vault.
+**Chat import** — Drop exported conversations from ChatGPT, Gemini, or any LLM into `00_Inbox/` and run `/inbox`. Iris extracts insights and files them into your vault.
 
 **Voice** (`./.claude/hooks/voice/install.sh`) — Your vault reads itself to you. Claude speaks its replies aloud in a local neural voice: no API key, no cloud, no per-word billing, works on a subscription. It reads the *whole* reply (including prose written around tool calls, which the naive version silently truncates), synthesizes ahead so there's no gap between sentences, ducks your music while it talks, and stops on command. Built during a concussion, when I had to minimize screen time and listening cost me no recovery. Take a walk and keep working. See [`.claude/hooks/voice/`](.claude/hooks/voice/).
 
@@ -32,7 +32,7 @@ Optionally open the folder as a vault in [Obsidian](https://obsidian.md) for a v
 ## Folder Structure
 
 ```
-apollo-vault/
+iris-vault/
 ├── 00_Inbox/           # Drop files here for processing
 ├── 01_Projects/        # Active, time-bound initiatives
 ├── 02_Areas/           # Ongoing responsibilities
@@ -89,7 +89,7 @@ pnpm attachments:sizes        # Find large files
 
 ### iCloud Access
 
-During setup, Apollo offers to configure your vault in iCloud so you can access it from any Mac running Claude Code.
+During setup, Iris offers to configure your vault in iCloud so you can access it from any Mac running Claude Code.
 
 ### Mobile Access
 

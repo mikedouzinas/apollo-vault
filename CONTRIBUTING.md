@@ -1,11 +1,11 @@
-# Contributing to Apollo Vault
+# Contributing to Iris Vault
 
 Thank you for your interest in contributing! This document provides guidelines for contributing to the project.
 
 ## Development Setup
 
 1. Fork the repository
-2. Clone your fork: `git clone https://github.com/yourusername/apollo-vault.git`
+2. Clone your fork: `git clone https://github.com/yourusername/iris-vault.git`
 3. Install dependencies: `pnpm install`
 4. Create a feature branch: `git checkout -b feature/your-feature-name`
 

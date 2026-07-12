@@ -1,5 +1,5 @@
 {
-  "name": "Apollo Vault",
+  "name": "Iris Vault",
   "description": "Your Obsidian vault, but it thinks. Built on Claude Code.",
   "version": "0.1.0",
   "settings": {
@@ -53,7 +53,7 @@
       "file": "commands/release.md"
     },
     "upgrade": {
-      "description": "Upgrade Apollo Vault",
+      "description": "Upgrade Iris Vault",
       "file": "commands/upgrade.md"
     }
   },
