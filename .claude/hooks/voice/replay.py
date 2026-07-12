@@ -46,53 +46,56 @@ def last_assistant_text(tpath):
             parts.append(c.strip())
     return "\n\n".join(parts) if parts else None
 
-# Words the phonemizer gets wrong. Respell them the way they should SOUND.
-# Left side is a regex, right side is what gets spoken. Add freely.
-PRONOUNCE = [
-    (r"\br[e\u00e9]sum[e\u00e9]s\b", "rezoomays"),
-    (r"\br[e\u00e9]sum[e\u00e9]\b",  "rezoomay"),
-    (r"\bresumes\b",       "rezoomays"),
-    (r"\bresume\b",        "rezoomay"),   # the CV. Collides with the verb
-    (r"\bTTS\b",           "T T S"),      # ("resume playback"), rare here.
-    (r"\biOS\b",           "eye O S"),
-    (r"\bCLI\b",           "C L I"),
-    (r"\bLLM(s?)\b",       r"L L M\1"),
-    (r"\bJSON\b",          "jayson"),
-    (r"\be\.g\.",          "for example"),
-    (r"\bi\.e\.",          "that is"),
-    (r"\bvs\.",            "versus"),     # must precede the bare form
-    (r"\bvs\b",            "versus"),
-    (r"\betc\.",           "etcetera"),
-]
+LEXICON = os.path.expanduser("~/.claude/hooks/voice/voice-lexicon.txt")
+
+def _lexicon():
+    """User-editable pronunciation rules, reloaded every reply.
+
+    The point: never edit Python to fix a word again. Hear something mangled,
+    add a line to voice-lexicon.txt (or ask Iris to), and it is fixed on the
+    next reply. Structural classes (URLs, acronyms) are handled by RULES below
+    so they never need an entry at all.
+    """
+    rules = []
+    try:
+        with open(LEXICON) as f:
+            for line in f:
+                line = line.split("#")[0].strip()
+                if "->" not in line:
+                    continue
+                pat, rep = line.split("->", 1)
+                pat = pat.strip()
+                # Only anchor a word-boundary where one can actually match. A
+                # pattern ending in punctuation (vs\.) has no \b after it.
+                lead = r"\b" if pat[:1].isalnum() else ""
+                tail = r"\b" if pat[-1:].isalnum() else ""
+                rules.append((lead + pat + tail, rep.strip()))
+    except Exception:
+        pass
+    return rules
 
 _URL = re.compile(r"\b([a-zA-Z0-9][\w-]*)\.(com|org|net|io|dev|ai|co|app|edu|gov)((?:/[\w\-./]*)?)")
 
 def _say_url(m):
     """mikeveson.com/the-web -> 'mikeveson dot com slash the web'.
 
-    Without this the period reads as a sentence break, so you hear
+    Without this the period reads as a SENTENCE BREAK, so you hear
     'mikeveson ... com', and the path is never spoken at all.
     """
     host, tld, path = m.group(1), m.group(2), m.group(3) or ""
     out = "%s dot %s" % (host, tld)
-    if path:
-        for seg in path.strip("/").split("/"):
-            if seg:
-                out += " slash " + seg.replace("-", " ").replace("_", " ")
+    for seg in path.strip("/").split("/"):
+        if seg:
+            out += " slash " + seg.replace("-", " ").replace("_", " ")
     return out
 
-# GREEK_INTERIM: Kokoro has no Greek. Fed native script, espeak spells the letters
-# out one by one (a short sentence became 14 seconds of alphabet). Until Greek is
-# routed to macOS `say -v Melina`, drop it from the spoken stream rather than
-# recite it. See harlequin#122.
-_GREEK = re.compile(r"[\u0370-\u03ff\u1f00-\u1fff]")
-
 def normalize(t):
-    """Make text speakable: expand URLs, respell what the phonemizer mangles."""
-    if _GREEK.search(t):
-        t = " ".join(w for w in t.split() if not _GREEK.search(w))
+    """Structural rules first (they generalize), then the user lexicon."""
     t = _URL.sub(_say_url, t)
-    for pat, rep in PRONOUNCE:
+    # Bare ALL-CAPS acronyms (3-5 letters) get spelled out. Generic, so new ones
+    # never need a lexicon entry.
+    t = re.sub(r"\b([A-Z]{3,5})\b", lambda m: " ".join(m.group(1)), t)
+    for pat, rep in _lexicon():
         t = re.sub(pat, rep, t, flags=re.IGNORECASE)
     return re.sub(r"\s+", " ", t)
 

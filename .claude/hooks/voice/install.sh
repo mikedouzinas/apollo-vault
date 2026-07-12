@@ -26,7 +26,7 @@ fi
 
 # 1. Files
 mkdir -p "$VOICE_DIR" "$BIN"
-cp "$SRC"/{speak-response.py,kokoro_server.py,replay.py} "$VOICE_DIR/"
+cp "$SRC"/{speak-response.py,kokoro_server.py,replay.py,voice-lexicon.txt} "$VOICE_DIR/"
 cp "$SRC"/bin/* "$BIN/"
 chmod +x "$BIN"/tts* "$VOICE_DIR"/*.py
 

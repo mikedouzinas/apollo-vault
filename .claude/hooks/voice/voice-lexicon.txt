@@ -1,0 +1,19 @@
+# How Iris should PRONOUNCE things. One rule per line:  pattern -> spoken
+# Left side is a regex (case-insensitive). Reloaded on every reply, so edits
+# take effect immediately. No restart, no code.
+#
+# Heard something mangled? Add a line. Or just tell Iris and she'll add it.
+
+resume    -> rezoomay          # the CV. english reads it as the verb, re-ZOOM
+resumes   -> rezoomays
+résumé    -> rezoomay
+TTS       -> T T S
+iOS       -> eye O S
+CLI       -> C L I
+JSON      -> jayson
+LLM       -> L L M
+LLMs      -> L L Ms
+e\.g\.    -> for example
+i\.e\.    -> that is
+vs\.      -> versus
+etc\.     -> etcetera

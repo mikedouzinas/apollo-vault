@@ -32,6 +32,9 @@ _pending = None
 _pending_id = 0
 DEBOUNCE = 0.35   # coalesce hook double-fires within this window; play only the fullest
 
+GREEK_RE = re.compile(r"[\u0370-\u03ff\u1f00-\u1fff]")
+GREEK_VOICE = "Melina"      # macOS `say`, el_GR. Kokoro has no Greek at all.
+
 def _sentences(text):
     parts = re.split(r'(?<=[.!?])\s+', text)
     out = []
@@ -39,57 +42,50 @@ def _sentences(text):
         p = p.strip()
         if not p:
             continue
-        if out and len(out[-1]) < 60:          # merge short fragments -> fewer chunk boundaries
+        if out and len(out[-1]) < 60:          # merge short fragments -> fewer boundaries
             out[-1] += " " + p
         else:
             out.append(p)
     return out or [text]
 
-# ---- audio ducking -----------------------------------------------------------
-# Lower music while Iris speaks, restore it after. Rules:
-#   - NEVER touch play/pause state, only volume. If it wasn't playing, we don't touch it.
-#   - Remember the ORIGINAL volume once; overlapping speaks can't clobber it.
-#   - Restore on natural finish and on /stop.
-DUCK_APPS = ["Spotify", "Music"]
-DUCK_FACTOR = 0.25
-_ducked = {}          # app -> volume before we touched it
-_duck_lock = threading.Lock()
+def _runs(text):
+    """Split into ('el'|'en', chunk) runs, in order.
 
-def _osa(script):
+    Greek and English can alternate inside one reply. Each run is routed to the
+    engine that can actually pronounce it, and both engines write FILES into the
+    same playback queue -- so ordering, interruption and ducking keep working
+    unchanged. Punctuation attaches to the run it follows.
+    """
+    toks = re.findall(r"\S+\s*", text)
+    runs, cur, lang = [], [], None
+    for t in toks:
+        l = "el" if GREEK_RE.search(t) else ("en" if re.search(r"[A-Za-z]", t) else lang or "en")
+        if l != lang and cur:
+            runs.append((lang, "".join(cur).strip())); cur = []
+        lang = l
+        cur.append(t)
+    if cur:
+        runs.append((lang, "".join(cur).strip()))
+    return [(l, c) for l, c in runs if c]
+
+def _synth(lang, chunk):
+    """Render one chunk to a file. Returns a path, or None."""
+    fd, path = tempfile.mkstemp(suffix=".aiff" if lang == "el" else ".wav", dir="/tmp")
+    os.close(fd)
     try:
-        r = subprocess.run(["osascript", "-e", script],
-                           capture_output=True, text=True, timeout=2)
-        return r.stdout.strip()
+        if lang == "el":
+            # `say -o` writes a file instead of playing, so Greek lands in the SAME
+            # queue as Kokoro's WAVs. One player, one ordering.
+            subprocess.run(["say", "-v", GREEK_VOICE, "-o", path, chunk],
+                           check=True, stderr=subprocess.DEVNULL, timeout=30)
+        else:
+            samples, sr = kokoro.create(chunk, voice=VOICE, speed=SPEED, lang=LANG)
+            sf.write(path, _trim(samples, sr), sr)
+        return path
     except Exception:
-        return ""
-
-def _running(app):
-    return subprocess.run(["pgrep", "-x", app],
-                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0
-
-def duck():
-    with _duck_lock:
-        for app in DUCK_APPS:
-            if app in _ducked or not _running(app):
-                continue
-            if _osa('tell application "%s" to player state as string' % app) != "playing":
-                continue                       # not playing -> leave it entirely alone
-            try:
-                vol = int(_osa('tell application "%s" to sound volume' % app))
-            except ValueError:
-                continue
-            if vol <= 0:
-                continue
-            _ducked[app] = vol                 # original remembered exactly once
-            _osa('tell application "%s" to set sound volume to %d'
-                 % (app, max(1, int(vol * DUCK_FACTOR))))
-
-def unduck():
-    with _duck_lock:
-        for app, vol in list(_ducked.items()):
-            _osa('tell application "%s" to set sound volume to %d' % (app, vol))
-            _ducked.pop(app, None)
-# ------------------------------------------------------------------------------
+        try: os.remove(path)
+        except Exception: pass
+        return None
 
 def _trim(samples, sr, thresh=0.006):
     mono = samples.mean(axis=1) if samples.ndim > 1 else samples
@@ -111,19 +107,21 @@ def _run(text, my_gen):
 def _play(text, my_gen):
     q = queue.Queue(maxsize=4)
     def producer():
-        for sent in _sentences(text):
-            if my_gen != _gen:
-                break
-            try:
-                samples, sr = kokoro.create(sent, voice=VOICE, speed=SPEED, lang=LANG)
-                samples = _trim(samples, sr)
-            except Exception:
-                continue
-            if my_gen != _gen:
-                break
-            fd, path = tempfile.mkstemp(suffix=".wav", dir="/tmp"); os.close(fd)
-            sf.write(path, samples, sr)
-            q.put(path)
+        # Route each language run to the engine that can pronounce it, then split
+        # long English runs into sentences so the prefetch stays responsive.
+        for lang, run in _runs(text):
+            chunks = [run] if lang == "el" else _sentences(run)
+            for chunk in chunks:
+                if my_gen != _gen:
+                    q.put(None); return
+                path = _synth(lang, chunk)
+                if path is None:
+                    continue
+                if my_gen != _gen:
+                    try: os.remove(path)
+                    except Exception: pass
+                    q.put(None); return
+                q.put(path)
         q.put(None)
     threading.Thread(target=producer, daemon=True).start()
     while True:
