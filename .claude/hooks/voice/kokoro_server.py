@@ -66,19 +66,30 @@ nosotros ellos se le lo su mi tus mis al ya nada algo hay mucho mucha poco
 entonces aunque hasta desde sobre entre cada otro otra as\u00ed aqu\u00ed all\u00ed buenos
 buenas noches d\u00edas tarde cabeza hablar quiero c\u00f3mo est\u00e1s estoy
 """.split())
-SPANISH_STRONG = re.compile(r"[\u00f1\u00bf\u00a1]|[\u00e1\u00e9\u00ed\u00f3\u00fa]\w")   # \u00f1 and inverted marks are Spanish-only
+# ONLY these are Spanish-specific. Accented vowels are NOT: English is full of
+# loanwords carrying them (r\u00e9sum\u00e9, caf\u00e9, na\u00efve, Beyonc\u00e9), and one of them used to
+# be enough to flip a whole English sentence into a Spanish voice.
+SPANISH_ONLY = re.compile(r"[\u00f1\u00bf\u00a1]")
+ACCENT = re.compile(r"[\u00e1\u00e9\u00ed\u00f3\u00fa]")
 
 def _is_spanish(text):
-    toks = re.findall(r"[a-z\u00e1\u00e9\u00ed\u00f3\u00fa\u00f1\u00fc]+", text.lower())
+    low = text.lower()
+    toks = re.findall(r"[a-z\u00e1\u00e9\u00ed\u00f3\u00fa\u00f1\u00fc]+", low)
     if not toks:
         return False
-    if SPANISH_STRONG.search(text.lower()):
+    if SPANISH_ONLY.search(low):
         return True
-    hits = sum(1 for t in toks if t in SPANISH_WORDS)
+
+    word_hits = sum(1 for t in toks if t in SPANISH_WORDS)
     if len(toks) <= 3:
-        return hits >= 1        # "Hola." / "Gracias." can't clear a 2-hit bar
-    # Otherwise two independent signals: enough hits AND enough density. A lone
-    # "con" or "hay" inside an English sentence must never flip the voice.
+        return word_hits >= 1          # "Hola." can't clear a 2-hit bar
+
+    # An accent is a HINT, never a verdict: it can raise confidence, but it can
+    # never carry a sentence on its own. A real Spanish function word must be
+    # present before any accent counts for anything.
+    if word_hits < 1:
+        return False
+    hits = word_hits + sum(1 for t in toks if ACCENT.search(t))
     return hits >= 2 and hits / len(toks) >= 0.20
 
 def _raw_sentences(text):

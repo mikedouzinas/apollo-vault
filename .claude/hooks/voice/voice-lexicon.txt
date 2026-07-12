@@ -4,9 +4,12 @@
 #
 # Heard something mangled? Add a line. Or just tell Iris and she'll add it.
 
-resume    -> rezoomay          # the CV. english reads it as the verb, re-ZOOM
-resumes   -> rezoomays
+# Longest form FIRST: rules apply in file order, so résumés must be replaced
+# before résumé, or the plural loses its 's' and keeps an accent.
+résumés   -> rezoomays
 résumé    -> rezoomay
+resumes   -> rezoomays
+resume    -> rezoomay          # the CV. english reads it as the verb, re-ZOOM
 TTS       -> T T S
 iOS       -> eye O S
 CLI       -> C L I
