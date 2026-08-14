@@ -109,11 +109,24 @@ if [ -n "$UNEXPECTED" ]; then
     FAILED=1
 fi
 
-# Strings that mean a real account, not a repository.
-for marker in "sideromv" "sideroman" "mv57@rice.edu" "@douzinas.com" "sk-ant-" "GEMINI_API_KEY=" "ghp_"; do
-    if grep -rqiF "$marker" "$STAGE" 2>/dev/null; then
+# Strings that mean a real account or a real key, not a repository. This script carries the
+# patterns themselves, so it is excluded from its own scan.
+SCAN_EXCLUDE=(--exclude="make-distributable.sh")
+
+# Personal addresses.
+for marker in "sideromv" "sideroman" "mv57@rice.edu" "@douzinas.com"; do
+    if grep -rqiF "${SCAN_EXCLUDE[@]}" "$marker" "$STAGE" 2>/dev/null; then
         echo "  LEAK: '$marker' appears in the build" >&2
-        grep -rniF "$marker" "$STAGE" 2>/dev/null | sed "s|$STAGE|  |" | head -5 >&2
+        grep -rniF "${SCAN_EXCLUDE[@]}" "$marker" "$STAGE" 2>/dev/null | sed "s|$STAGE|  |" | head -5 >&2
+        FAILED=1
+    fi
+done
+
+# Live credentials. These patterns match a real key, not the word or a placeholder.
+for pattern in "sk-ant-[A-Za-z0-9_-]{12}" "ghp_[A-Za-z0-9]{12}" "AIza[0-9A-Za-z_-]{20}" "eyJ[A-Za-z0-9_-]{30}"; do
+    if grep -rqE "${SCAN_EXCLUDE[@]}" "$pattern" "$STAGE" 2>/dev/null; then
+        echo "  LEAK: a credential matching /$pattern/ is in the build" >&2
+        grep -rnE "${SCAN_EXCLUDE[@]}" "$pattern" "$STAGE" 2>/dev/null | cut -c1-120 | sed "s|$STAGE|  |" | head -5 >&2
         FAILED=1
     fi
 done
