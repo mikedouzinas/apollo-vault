@@ -165,14 +165,26 @@ rm -f "$OUT"
 ( cd "$WORK" && zip -q -r -X "$OUT" "iris-vault" )
 
 # Read the finished artifact back rather than trusting what went in.
-if ! unzip -l "$OUT" | grep -q "iris-vault/.claude/settings.json"; then
-    echo "FAIL: .claude/ did not make it into the zip." >&2
-    rm -f "$OUT"
-    exit 1
-fi
+# The manifest is captured before it is searched: piping into `grep -q` under `pipefail`
+# reports a failure when grep exits early and unzip takes a SIGPIPE.
+MANIFEST="$(unzip -l "$OUT")"
+for entry in "iris-vault/CLAUDE.md" "iris-vault/START HERE.md" "iris-vault/FIRST_RUN" "iris-vault/.claude/settings.json"; do
+    if ! grep -qF "$entry" <<< "$MANIFEST"; then
+        echo "FAIL: $entry is not in the finished zip." >&2
+        rm -f "$OUT"
+        exit 1
+    fi
+done
+for forbidden in "iris-vault/.git/" "node_modules/" "settings.local.json"; do
+    if grep -qF "$forbidden" <<< "$MANIFEST"; then
+        echo "FAIL: $forbidden made it into the finished zip." >&2
+        rm -f "$OUT"
+        exit 1
+    fi
+done
 
 echo ""
 echo "Built: $OUT"
 echo "From:  $SOURCE_REF"
 echo "Size:  $(du -h "$OUT" | cut -f1)"
-echo "Files: $(unzip -l "$OUT" | tail -1 | awk '{print $2}')"
+echo "Files: $(tail -1 <<< "$MANIFEST" | awk '{print $2}')"
