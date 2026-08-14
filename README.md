@@ -2,16 +2,36 @@
 
 Claude Code + Obsidian starter kit. Works in terminal, desktop app, or multiple instances at once.
 
-## Quick Start
+## Start here
+
+1. Download the vault: **[mikeveson.com/vault](https://mikeveson.com/vault)**
+2. Unzip it. Put the folder anywhere you like.
+3. Get the Claude app: [claude.com/download](https://claude.com/download). Sign in.
+4. Click the **Code** tab, then **Select folder**, and pick that folder.
+5. Say **hi**.
+
+Iris opens the conversation, explains what the folder is, asks you a few questions, and writes your answers into `CLAUDE.md`. It takes a couple of minutes and there is nothing to install.
+
+The longer version of the same five steps, written for someone who has never used any of this, is `START HERE.md` inside the folder.
+
+Claude Code requires a paid Claude plan (Pro, Max, Team, or Enterprise).
+
+<!-- docs-check: allow-commands -->
+
+## If you use a terminal
+
+Clone instead of downloading. Same vault, same first conversation.
 
 ```bash
 git clone https://github.com/mikedouzinas/iris-vault.git my-vault
 cd my-vault
-./install.sh    # or: pnpm install
-claude          # start Claude Code
+git remote remove origin    # so your notes never push to someone else's repo
+claude
 ```
 
-Then run `/init-bootstrap`. It walks you through setup in a conversation, learns about you, and generates a CLAUDE.md tailored to how you work.
+Then say **hi**. There is no setup command to run.
+
+`./install.sh` is optional and nothing on day one needs it. It sets up the Gemini Vision MCP server and checks for optional command-line tools.
 
 Optionally open the folder as a vault in [Obsidian](https://obsidian.md) for a visual interface alongside Claude Code.
 
@@ -50,9 +70,10 @@ iris-vault/
 
 ## Commands
 
+Every one of these is optional. Iris does the work when you ask for it in plain words; the commands are shortcuts, not the interface.
+
 | Command | What It Does |
 |---------|-------------|
-| `/init-bootstrap` | Setup wizard |
 | `/council [topic]` | Multi-perspective reasoning |
 | `/thinking-partner` | Collaborative thinking through questions |
 | `/daily-review` | End-of-day reflection (5-10 min) |
@@ -63,9 +84,9 @@ iris-vault/
 | `/create-command` | Build custom commands |
 | `/de-ai-ify` | Remove AI writing patterns |
 
-## Setup Features
+## Optional Extras
 
-During `/init-bootstrap`, you can configure:
+Ask Iris for any of these whenever you want them. None of them are part of day one.
 
 - **Daily Journal** - Auto-capture insights from conversations
 - **Weekly Review** - Pattern recognition and planning ritual
@@ -79,6 +100,7 @@ During `/init-bootstrap`, you can configure:
 ## Helper Scripts
 
 ```bash
+pnpm docs:check               # Onboarding docs still tell one story
 pnpm vault:stats              # Vault statistics
 pnpm attachments:list         # Show unprocessed attachments
 pnpm attachments:orphans      # Find unreferenced files
@@ -89,7 +111,7 @@ pnpm attachments:sizes        # Find large files
 
 ### iCloud Access
 
-During setup, Iris offers to configure your vault in iCloud so you can access it from any Mac running Claude Code.
+Ask Iris to move your vault into iCloud and you can reach it from any Mac running Claude Code.
 
 ### Mobile Access
 

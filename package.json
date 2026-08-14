@@ -4,7 +4,7 @@
   "description": "Iris Vault - Your Obsidian vault, but it thinks. Built on Claude Code.",
   "type": "module",
   "scripts": {
-    "setup": "pnpm install && echo 'Setup complete! Run: claude' && echo 'Then: /init-bootstrap'",
+    "setup": "pnpm install && echo 'Dependencies installed. Nothing else is required: open this folder in Claude and say hi.'",
     "test-gemini": "GEMINI_API_KEY=${GEMINI_API_KEY} node .claude/mcp-servers/gemini-vision.mjs",
     "attachments:list": "ls -1 '05_Attachments/' | grep -v Organized | head -20",
     "attachments:count": "ls -1 '05_Attachments/' | grep -v Organized | wc -l",
@@ -15,7 +15,10 @@
     "attachments:orphans": "for file in 05_Attachments/*; do basename \"$file\" | xargs -I {} sh -c 'grep -r \"{}\" . --include=\"*.md\" > /dev/null || echo \"{}\"'; done",
     "attachments:recent": "find 05_Attachments -type f -mtime -7 -exec ls -la {} \\;",
     "attachments:create-organized": "mkdir -p 05_Attachments/Organized",
-    "vault:stats": ".scripts/vault-stats.sh"
+    "vault:stats": ".scripts/vault-stats.sh",
+    "docs:check": "node .scripts/docs-check.mjs",
+    "vault:check": "pnpm docs:check",
+    "dist": ".scripts/make-distributable.sh"
   },
   "keywords": [
     "obsidian",

@@ -149,6 +149,6 @@ Present the synthesis section to the user, then mention the full council output 
 ## Tips
 
 - Works best with genuine dilemmas, not factual questions
-- Custom perspectives can be configured during `/init-bootstrap` or by editing `.claude/vault-config.json`
+- Custom perspectives: ask Iris to change them, or edit `.claude/vault-config.json`
 - The vault context step makes this powerful: your own notes inform each perspective
 - Run multiple councils on the same topic as your thinking evolves

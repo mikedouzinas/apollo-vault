@@ -4,9 +4,6 @@ Pre-configured commands for your Claude Code + Obsidian workflow.
 
 ## Available Commands
 
-### /init-bootstrap
-Setup wizard. Configures your vault, imports existing notes, sets up intelligence features.
-
 ### /council
 Think through a problem from multiple genuine perspectives. Each perspective agent doesn't know about the others, producing authentic reasoning instead of performative debate.
 
