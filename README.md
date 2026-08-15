@@ -16,6 +16,20 @@ The longer version of the same five steps, written for someone who has never use
 
 Claude Code requires a paid Claude plan (Pro, Max, Team, or Enterprise).
 
+## Or skip the download
+
+If you already have the Claude app, there is nothing to download at all.
+
+1. Make a new empty folder anywhere, and name it whatever you want.
+2. Open the Claude app, click the **Code** tab, then **Select folder**, and pick it.
+3. Send this as your first message:
+
+> Set this folder up as my Iris vault by following mikeveson.com/setup
+
+Claude fetches the vault into that folder and then introduces itself. Same result as the five steps above, with no zip file and nothing to unzip.
+
+This route always gets the current version, because it is fetched when you set up rather than whenever you happened to download.
+
 <!-- docs-check: allow-commands -->
 
 ## If you use a terminal

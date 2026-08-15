@@ -27,3 +27,6 @@ dist/
 
 # Never commit real API keys
 *_API_KEY
+
+# Per-machine Claude Code settings. Never ship the author's allow list to a recipient.
+.claude/settings.local.json

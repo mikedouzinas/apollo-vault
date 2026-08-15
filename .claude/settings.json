@@ -1,11 +1,14 @@
 {
+  "permissions": {
+    "defaultMode": "acceptEdits"
+  },
   "hooks": {
     "SessionStart": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "[ -f FIRST_RUN ] && echo '{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"\\n\\nThis vault has not been set up yet (FIRST_RUN exists). Follow the FIRST RUN section of CLAUDE.md now: greet them, explain in plain words what this folder is, ask the four questions one at a time, write their answers into CLAUDE.md, delete FIRST_RUN, and then invite them to give you something to read. Do not tell them to run a slash command.\"}}' || true"
+            "command": "grep -q '^## FIRST RUN' CLAUDE.md 2>/dev/null && echo '{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"\\n\\nThis vault has not been set up yet (CLAUDE.md still contains its FIRST RUN section). Follow the FIRST RUN section of CLAUDE.md now: greet them, explain in plain words what this folder is, ask the four questions one at a time, and write their answers into CLAUDE.md in place of that whole section. Replacing that section is what marks setup complete, so do not leave it in the file. Then invite them to give you something to read. Do not tell them to run a slash command.\"}}' || true"
           }
         ]
       }

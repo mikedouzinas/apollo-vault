@@ -17,8 +17,10 @@
     "attachments:create-organized": "mkdir -p 05_Attachments/Organized",
     "vault:stats": ".scripts/vault-stats.sh",
     "docs:check": "node .scripts/docs-check.mjs",
-    "vault:check": "pnpm docs:check",
-    "dist": ".scripts/make-distributable.sh"
+    "vault:check": "pnpm docs:check && pnpm setup:check",
+    "dist": ".scripts/make-distributable.sh",
+    "setup:publish": ".scripts/publish-setup.sh",
+    "setup:check": ".scripts/publish-setup.sh --check"
   },
   "keywords": [
     "obsidian",

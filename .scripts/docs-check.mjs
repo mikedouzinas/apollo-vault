@@ -44,14 +44,25 @@ const fail = (file, line, message) =>
 for (const rel of ONBOARDING) {
   if (!existsSync(join(ROOT, rel))) fail(rel, 0, "onboarding file is missing");
 }
-if (!existsSync(join(ROOT, "FIRST_RUN"))) {
-  fail("FIRST_RUN", 0, "missing, so a fresh copy will not introduce itself");
-}
 const claudeMd = existsSync(join(ROOT, "CLAUDE.md"))
   ? readFileSync(join(ROOT, "CLAUDE.md"), "utf8")
   : "";
-if (!/FIRST RUN/.test(claudeMd)) {
-  fail("CLAUDE.md", 0, "has no FIRST RUN block, so nothing runs the setup conversation");
+if (!/^## FIRST RUN/m.test(claudeMd)) {
+  fail("CLAUDE.md", 0, "has no '## FIRST RUN' heading, so a fresh copy will not introduce itself");
+}
+if (existsSync(join(ROOT, "FIRST_RUN"))) {
+  fail("FIRST_RUN", 0, "sentinel file is back; CLAUDE.md's '## FIRST RUN' heading is the only setup signal");
+}
+const settingsPath = join(ROOT, ".claude/settings.json");
+if (existsSync(settingsPath)) {
+  const settings = JSON.parse(readFileSync(settingsPath, "utf8"));
+  if (settings.permissions?.defaultMode !== "acceptEdits") {
+    fail(".claude/settings.json", 0, "permissions.defaultMode is not 'acceptEdits'; a first session starts in Manual and prompts on every write");
+  }
+  const hook = JSON.stringify(settings.hooks ?? {});
+  if (hook.includes("FIRST_RUN")) {
+    fail(".claude/settings.json", 0, "SessionStart hook still keys off the FIRST_RUN file instead of the CLAUDE.md heading");
+  }
 }
 if (failures.length) report();
 
