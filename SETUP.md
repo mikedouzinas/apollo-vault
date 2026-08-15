@@ -40,7 +40,10 @@ These exist for people browsing the project on GitHub and are noise inside a per
 - `CHANGELOG.md`
 - `LICENSE`
 - `SETUP.md` (this file)
+- `install.sh`
 - `.github/`
+
+Delete `install.sh` in particular. Nothing in this path needs it, and it prints "Setup Complete" even when the installs inside it failed, so leaving it there gives them a way to be told a broken thing worked.
 
 Keep `START HERE.md`. It is written for them.
 
