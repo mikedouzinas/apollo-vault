@@ -53,4 +53,13 @@ fi
 
 cp "$SRC" "$DEST"
 echo "publish-setup  SETUP.md -> $DEST"
+
+# The copy lands in whatever branch the portfolio happens to have checked out, which is
+# usually not the branch that serves the site. Say which one, so the file is not left
+# stranded on unrelated work.
+BRANCH="$(git -C "$PORTFOLIO" rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
+echo "               written on portfolio branch: $BRANCH"
+if [ "$BRANCH" != "main" ]; then
+  echo "               this is not main, so it will not deploy until that branch merges."
+fi
 echo "               commit and deploy the portfolio to serve it at mikeveson.com/setup"
