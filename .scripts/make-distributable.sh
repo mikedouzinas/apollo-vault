@@ -33,7 +33,7 @@ while [ $# -gt 0 ]; do
     esac
 done
 
-for tool in git zip unzip; do
+for tool in git zip unzip node; do
     command -v "$tool" >/dev/null 2>&1 || { echo "FAIL: $tool is required and is not installed." >&2; exit 1; }
 done
 
@@ -69,6 +69,24 @@ rm -rf "$STAGE/.git" "$STAGE/node_modules" "$STAGE/.github" "$STAGE/dist"
 rm -f "$STAGE/.claude/settings.local.json"
 find "$STAGE" -name '.DS_Store' -delete
 find "$STAGE" -name '__MACOSX' -prune -exec rm -rf {} + 2>/dev/null || true
+
+# Maintainer-only files. The recipient is somebody's mother opening a folder, not a contributor,
+# and this script in particular carries the personal-address markers used by the scan below.
+# Removing it here is also what lets that scan run with nothing excluded from it.
+MAINTAINER_ONLY=(".scripts/make-distributable.sh" "MAINTAINERS.md" "CONTRIBUTING.md")
+for m in "${MAINTAINER_ONLY[@]}"; do
+    rm -f "$STAGE/$m"
+done
+
+# A stripped file that package.json still calls is a broken command in the recipient's copy,
+# so the scripts that referenced them go too, and the check below proves none are left dangling.
+node -e '
+const fs = require("fs");
+const p = process.argv[1];
+const pkg = JSON.parse(fs.readFileSync(p, "utf8"));
+delete pkg.scripts.dist;
+fs.writeFileSync(p, JSON.stringify(pkg, null, 2) + "\n");
+' "$STAGE/package.json"
 
 # ---------------------------------------------------------------------------
 # Leak scan. A private file in this zip is the worst outcome this script can have,
@@ -109,24 +127,21 @@ if [ -n "$UNEXPECTED" ]; then
     FAILED=1
 fi
 
-# Strings that mean a real account or a real key, not a repository. This script carries the
-# patterns themselves, so it is excluded from its own scan.
-SCAN_EXCLUDE=(--exclude="make-distributable.sh")
-
-# Personal addresses.
+# Personal addresses. Nothing is excluded from this scan: the only file that carried these
+# markers was this script, and it was removed from the stage above.
 for marker in "sideromv" "sideroman" "mv57@rice.edu" "@douzinas.com"; do
-    if grep -rqiF "${SCAN_EXCLUDE[@]}" "$marker" "$STAGE" 2>/dev/null; then
+    if grep -rqiF "$marker" "$STAGE" 2>/dev/null; then
         echo "  LEAK: '$marker' appears in the build" >&2
-        grep -rniF "${SCAN_EXCLUDE[@]}" "$marker" "$STAGE" 2>/dev/null | sed "s|$STAGE|  |" | head -5 >&2
+        grep -rniF "$marker" "$STAGE" 2>/dev/null | sed "s|$STAGE|  |" | head -5 >&2
         FAILED=1
     fi
 done
 
 # Live credentials. These patterns match a real key, not the word or a placeholder.
 for pattern in "sk-ant-[A-Za-z0-9_-]{12}" "ghp_[A-Za-z0-9]{12}" "AIza[0-9A-Za-z_-]{20}" "eyJ[A-Za-z0-9_-]{30}"; do
-    if grep -rqE "${SCAN_EXCLUDE[@]}" "$pattern" "$STAGE" 2>/dev/null; then
+    if grep -rqE "$pattern" "$STAGE" 2>/dev/null; then
         echo "  LEAK: a credential matching /$pattern/ is in the build" >&2
-        grep -rnE "${SCAN_EXCLUDE[@]}" "$pattern" "$STAGE" 2>/dev/null | cut -c1-120 | sed "s|$STAGE|  |" | head -5 >&2
+        grep -rnE "$pattern" "$STAGE" 2>/dev/null | cut -c1-120 | sed "s|$STAGE|  |" | head -5 >&2
         FAILED=1
     fi
 done
@@ -151,6 +166,26 @@ for required in "CLAUDE.md" "START HERE.md" "FIRST_RUN" ".claude/settings.json";
 done
 if ! grep -q "FIRST RUN" "$STAGE/CLAUDE.md"; then
     echo "  MISSING: CLAUDE.md has no FIRST RUN block, so the vault will not introduce itself." >&2
+    FAILED=1
+fi
+
+# Every .scripts/ path that package.json still calls has to be in the stage. This is what stops
+# a file being stripped above while a command that runs it survives.
+DANGLING="$(node -e '
+const fs = require("fs");
+const [pkgPath, stage] = process.argv.slice(1);
+const scripts = JSON.parse(fs.readFileSync(pkgPath, "utf8")).scripts || {};
+const missing = [];
+for (const [name, cmd] of Object.entries(scripts)) {
+  for (const m of String(cmd).matchAll(/\.scripts\/[A-Za-z0-9._-]+/g)) {
+    if (!fs.existsSync(stage + "/" + m[0])) missing.push(name + " -> " + m[0]);
+  }
+}
+console.log(missing.join("\n"));
+' "$STAGE/package.json" "$STAGE")"
+if [ -n "$DANGLING" ]; then
+    echo "  DANGLING: package.json calls a script that is not in the build:" >&2
+    echo "$DANGLING" | sed 's|^|    |' >&2
     FAILED=1
 fi
 if [ "$FAILED" -ne 0 ]; then
