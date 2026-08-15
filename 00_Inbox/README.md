@@ -7,7 +7,7 @@ Your capture point. Drop anything here: ideas, links, files, chat exports.
 - **Quick capture**: Throw things in without thinking about organization
 - **Processing**: Run `/inbox` to organize items into the right folders
 - **Chat imports**: Drop ChatGPT/Gemini exports here and `/inbox` will extract insights
-- **During setup**: Drop files here before running `/init-bootstrap` for Iris to learn from
+- **Day one**: Drop anything you want Iris to know about you in here. It will read it.
 
 ## Tips
 

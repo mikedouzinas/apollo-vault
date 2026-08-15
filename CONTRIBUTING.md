@@ -57,8 +57,8 @@ Categories: Added, Changed, Deprecated, Removed, Fixed, Security
 # Fresh clone test
 git clone your-fork test-vault
 cd test-vault
-pnpm install
-claude  # Then run /init-bootstrap
+claude   # then say hi, and check that the FIRST RUN conversation opens on its own
+pnpm docs:check
 ```
 
 ## Questions?

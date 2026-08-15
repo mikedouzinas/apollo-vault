@@ -8,10 +8,6 @@
     "context_awareness": true
   },
   "commands": {
-    "init-bootstrap": {
-      "description": "Setup wizard - configure your vault",
-      "file": "commands/init-bootstrap.md"
-    },
     "council": {
       "description": "Multi-perspective reasoning council",
       "file": "commands/council.md"
@@ -66,7 +62,12 @@
     "c": "council"
   },
   "preferences": {
-    "primary_folders": ["00_Inbox", "01_Projects", "02_Areas", "03_Resources"],
+    "primary_folders": [
+      "00_Inbox",
+      "01_Projects",
+      "02_Areas",
+      "03_Resources"
+    ],
     "template_folder": "06_Metadata/Templates",
     "archive_after_days": 30,
     "default_note_location": "00_Inbox"

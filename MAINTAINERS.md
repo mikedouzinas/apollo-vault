@@ -2,10 +2,9 @@
 
 **This CLAUDE.md is for maintaining the iris-vault repository itself.**
 
-**If you're a user setting up your own vault:**
-- Run `/init-bootstrap` to create your personalized CLAUDE.md
-- That command will overwrite this file with your custom configuration
-- This file is only for contributors working on the iris-vault project
+**If you're a user setting up your own vault:** you do not need this file, or any command.
+Open the folder in the Claude app and say hi. The FIRST RUN block in `CLAUDE.md` runs the
+setup as a conversation and writes your answers into `CLAUDE.md` itself.
 
 ---
 
@@ -49,7 +48,6 @@ iris-vault/
 │   └── settings.local.json
 ├── .scripts/             # Helper bash/js scripts
 ├── 00_Inbox/ through 06_Metadata/  # Template PARA folders
-├── IRIS-BOOTSTRAP.md   # Template for user CLAUDE.md
 ├── CHANGELOG.md
 ├── CONTRIBUTING.md
 ├── README.md
@@ -60,7 +58,6 @@ iris-vault/
 ## Key Components
 
 ### Commands
-- `init-bootstrap` - Main setup wizard that overwrites this file
 - `council` - Multi-perspective reasoning with independent agents
 - `daily-review` - Customizable end-of-day reflection
 - `weekly-synthesis` - Two-phase weekly review
@@ -90,22 +87,22 @@ iris-vault/
 ```bash
 git clone https://github.com/mikedouzinas/iris-vault.git test-vault
 cd test-vault
-pnpm install
-claude  # Then run /init-bootstrap
+claude   # then say hi, and check that the FIRST RUN conversation opens on its own
+pnpm docs:check
+./.scripts/make-distributable.sh --out /tmp/iris-vault.zip
 ```
 
 ### Important Files
 
-- **IRIS-BOOTSTRAP.md** - Template that init-bootstrap uses to generate user CLAUDE.md
+- **CLAUDE.md** - The product. Its FIRST RUN block is the entire setup experience.
+- **START HERE.md** - The non-technical door. Same five steps as the README.
+- **.scripts/docs-check.mjs** - Fails if any onboarding doc tells the reader to run a command first.
+- **.scripts/make-distributable.sh** - Builds the sendable zip. The zip is never hand-assembled.
 - **package.json** - Version and dependencies
-- **.claude/commands/init-bootstrap.md** - The setup wizard (most important command)
 
 ## Note for Contributors
 
-Users run `/init-bootstrap` which:
-1. Reads IRIS-BOOTSTRAP.md as template
-2. Asks personalization questions in conversation
-3. Overwrites this CLAUDE.md with user's configuration
-4. Sets up their personal vault
-
-This separation ensures repo maintenance instructions don't interfere with user vault configuration.
+Setup is a conversation, not a wizard. `FIRST_RUN` exists in a fresh copy; `CLAUDE.md` tells Iris
+to greet the person, ask four questions, write the answers over the FIRST RUN block, and delete
+`FIRST_RUN`. Nothing asks them to type a command, and four documents used to disagree about that.
+`pnpm docs:check` is what keeps them agreeing.

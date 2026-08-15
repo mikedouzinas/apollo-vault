@@ -1,9 +1,9 @@
 # Welcome to Iris Vault
 
-## Getting Started
+This is the Inbox. Anything that does not have a home yet goes here, and Iris will sort it.
 
-1. Run `/init-bootstrap` to configure your vault
-2. Drop any files you want Iris to learn from into this Inbox folder (chat exports, notes, docs)
-3. Try `/thinking-partner`, `/council`, `/daily-review`, or `/weekly-synthesis`
+There is nothing to set up. Open this folder in the Claude app (the **Code** tab, then **Select folder**), and say **hi**. Iris takes it from there.
 
-Built on [Claudesidian](https://github.com/heyitsnoah/claudesidian) by Noah Brier.
+The first thing worth trying: give Iris something to read. A PDF, an article, a document you have been meaning to get to. It reads it, writes down what mattered, and files it. Come back tomorrow and ask about it.
+
+`START HERE.md`, one folder up, is the longer version.

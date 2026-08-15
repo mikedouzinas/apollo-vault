@@ -22,5 +22,8 @@ node_modules/
 .node_modules/
 pnpm-lock.yaml
 
+# Build output of .scripts/make-distributable.sh
+dist/
+
 # Never commit real API keys
 *_API_KEY

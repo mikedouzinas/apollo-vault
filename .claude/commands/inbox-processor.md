@@ -138,7 +138,7 @@ For each file, determine:
 
 ## Setup Mode
 
-When called during `/init-bootstrap` (argument contains "setup"):
+When called during first-run setup (argument contains "setup"):
 
 - Focus on **learning about the user** from the dropped files
 - Extract: preferences, project context, recurring themes, expertise
