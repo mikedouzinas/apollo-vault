@@ -53,7 +53,23 @@ Now follow the `## FIRST RUN` section of `CLAUDE.md`, which is the actual onboar
 
 Do not restart the greeting if you have already been talking to them. Pick up from wherever the conversation actually is.
 
-## Step 6: say what you did, in one short paragraph
+## Step 6: offer them the capture loop
+
+Only after the conversation in step 5 is finished, and only as an offer.
+
+Tell them, in plain words, that the folder can catch thoughts from their phone if it lives in iCloud Drive or Dropbox, and that anything landing in `00_Inbox` gets picked up. Do not walk them through cloud storage settings unless they ask. One sentence, and move on if they are not interested.
+
+Then offer the reader, because a capture folder with nothing reading it is the main way this stops being used:
+
+> Want me to set up a daily pass? Once a day it goes through anything new in your inbox, files it, answers anything that was a question, and leaves you a summary. You would not have to remember to ask.
+
+If they say yes, tell them where to click: the **Routines** section in the Claude app's sidebar, **New routine**, **Local**, this folder, **Daily**. For the instructions field, give them the text to use:
+
+> Go through anything new in `00_Inbox`, file it where it belongs, answer anything that was a question, and leave me a short summary.
+
+Say plainly that it only runs while the app is open and the computer is awake, and that a missed day catches up the next time they open it. Do not oversell it.
+
+## Step 7: say what you did, in one short paragraph
 
 Not a list of steps. Something closer to: their vault is ready, it lives in this folder, it is plain text files they own, and the next thing worth doing is handing you something to read.
 

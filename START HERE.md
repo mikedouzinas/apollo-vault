@@ -71,6 +71,34 @@ It will still be there. That is the moment where this stops being a chatbot.
 
 ---
 
+## Getting thoughts in when you are not at your computer
+
+This is the part that makes it a habit instead of a tool you remember on Sundays.
+
+The vault is a folder, so anything that can put a text file in a folder can capture into it. Put the vault in iCloud Drive or Dropbox, and then on your phone:
+
+- A notes app that can save into that folder writes straight into `00_Inbox`.
+- Sharing a link or an article into that folder works the same way.
+- Dictating into a note works, and typos do not matter. Iris reads for meaning.
+
+**Do not try to file it properly from your phone.** Getting the thought out is the whole job. Put it in `00_Inbox` and forget about it.
+
+### What happens to it next
+
+Nothing, until something reads it. That is the failure mode worth knowing about up front: a folder will happily accept notes forever and never hand anything back, and a pile you do not trust is worse than no pile.
+
+So give it a reader. Two ways, and you can use both:
+
+**Ask.** Next time you open Iris, say *"go through my inbox."* It reads what is in there, files each one where it belongs, answers anything that was a question, and tells you what it did.
+
+**Or have it happen on its own.** In the Claude app there is a **Routines** section in the sidebar. Make a new one, choose **Local**, point it at this folder, set it to Daily, and for the instructions write something like: *"Go through anything new in 00_Inbox, file it where it belongs, answer anything that was a question, and leave me a short summary."*
+
+That runs once a day without you. It only runs while the app is open and your computer is awake, and if it misses a day it catches up the next time you open it, so nothing is lost.
+
+**The shape of the whole thing:** get the thought out on your phone, let something process it later, then have a real conversation about it at your computer. Capture, then a pass, then conversation.
+
+---
+
 ## Some honest notes
 
 **Your files are yours.** They are plain text, on your machine, in a normal folder. Nothing is locked in a proprietary format and nothing needs this app to be readable. If you ever want to walk away, take the folder.
