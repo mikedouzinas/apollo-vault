@@ -20,7 +20,7 @@ People you work with belong in `02_Areas/Relationships/`, not duplicated here â€
 |---|---|
 | Notes, decisions, or reviews tied to a specific role | `[Job or Program]/` |
 | A skill you're actively building | `Skills.md` |
-| Job search state | `Search.md` |
+| Where you're looking, applications, what you learned from each conversation | `Search.md` |
 | A colleague as a person | `02_Areas/Relationships/` |
 
 ## When a role ends
